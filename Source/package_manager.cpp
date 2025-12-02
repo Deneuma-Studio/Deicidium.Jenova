@@ -33,16 +33,14 @@
 // Utilities
 static String GetPackageRepositoryPath(bool globalize = false)
 {
-	String path = String(jenova::GetEditorSetting(jenova::JenovaSettings::PackageRepositoryPathConfigPath)).replace("\\", "/");
-	if (path == "0") path = jenova::GlobalSettings::JenovaPackageRepositoryPath;
-	if (path.contains("res://")) path = globalize ? ProjectSettings::get_singleton()->globalize_path(path) : path;
+	String path = OS::get_singleton()->get_executable_path().get_base_dir() + "/Packages";
 	if (!path.ends_with("/")) path += "/";
 	return path;
 }
 static String SolvePackageDestination(const String& packageDestination)
 {
 	String packageRepositoryPath = GetPackageRepositoryPath(); // For Future Validation Logic
-	return packageDestination.replace(jenova::GlobalSettings::JenovaPackageRepositoryPath, packageRepositoryPath);
+	return packageDestination.replace("res://Jenova/Packages", packageRepositoryPath);
 }
 static String SolvePackageDestination(const std::string& packageDestination)
 {
@@ -50,27 +48,14 @@ static String SolvePackageDestination(const std::string& packageDestination)
 }
 static String GetPackageDatabasePath()
 {
-	// Get Package Database Path
-	String pkgDatabasePath;
-	if (GetPackageRepositoryPath(false).contains(jenova::GlobalSettings::JenovaPackageRepositoryPath))
-	{
-		pkgDatabasePath = jenova::GetJenovaProjectDirectory() + "Jenova/" + jenova::GlobalSettings::JenovaInstalledPackagesFile;
-	}
-	else
-	{
-		pkgDatabasePath = GetPackageRepositoryPath(true) + jenova::GlobalSettings::JenovaInstalledPackagesFile;
-	}
-
-	// Ensure Package Database Path Exists
+	String pkgDatabasePath = GetPackageRepositoryPath(true) + jenova::GlobalSettings::JenovaInstalledPackagesFile;
 	filesystem::path dir = filesystem::path(AS_STD_STRING(pkgDatabasePath)).parent_path();
 	if (!filesystem::exists(dir)) filesystem::create_directories(dir);
-
-	// All Good
 	return pkgDatabasePath;
 }
 
 // Configuration
-constexpr const char* packageDatabaseFileURL = "/Jenova-Framework/Jenova-Packages/refs/heads/main/Jenova.Package.Database.json";
+constexpr const char* packageDatabaseFileURL = "/Deneuma-Studio/Deicidium/refs/heads/main/Jenova.Package.Database.json";
 
 // Storages
 static jenova::PackageList onlinePackages;
@@ -1701,13 +1686,7 @@ bool JenovaPackageManager::PreparePackageManager()
 	{
 		if (!std::filesystem::create_directories(packageRepositoryPath)) return false;
 	}
-	
-	// Create Package Directory .gdignore If Not Exists
-	String gdIgnoreFilePath = GetPackageRepositoryPath(true) + ".gdignore";
-	if (!std::filesystem::exists(AS_STD_STRING(gdIgnoreFilePath)))
-	{
-		if (!jenova::WriteStringToFile(gdIgnoreFilePath, " ")) return false;
-	}
+
 
 	// All Good
 	return true;

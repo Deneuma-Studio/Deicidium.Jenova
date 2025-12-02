@@ -61,7 +61,7 @@ sources = [
 ]
 
 # Global Options
-builder_version     = "2.8"
+builder_version     = "2.8 - Deicidium"
 deps_version        = "4.5"
 double_precision    = False
 static_build        = False
@@ -507,7 +507,7 @@ def build_dependencies_linux(buildMode, cacheDir):
         if os.path.exists(buildPath): shutil.rmtree(buildPath)
         subprocess.run([
             "cmake",
-            "-S", "./Dependencies/libgodot",
+            "-S", "./Bindings",
             "-B", buildPath,
             "-G", "Ninja",
             "-DCMAKE_BUILD_TYPE=MinSizeRel",
@@ -521,8 +521,8 @@ def build_dependencies_linux(buildMode, cacheDir):
         shutil.copyfile(binary_path, "./Libs/libgodotcpp-static-x86_64.a")
         if os.path.exists(sdkPath): shutil.rmtree(sdkPath)
         os.makedirs(sdkPath, exist_ok=True)
-        shutil.copyfile("./Dependencies/libgodot/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
-        shutil.copytree("./Dependencies/libgodot/include", sdkPath, dirs_exist_ok=True)
+        shutil.copyfile("./Bindings/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
+        shutil.copytree("./Bindings/include", sdkPath, dirs_exist_ok=True)
         shutil.copytree(buildPath + "/gen/include", sdkPath, dirs_exist_ok=True)
         rgb_print("#38f227", "[ √ ] Jenova Runtime Dependency 'GodotSDK' Compiled Successfully.")
 def build_linux(compilerBinary, linkerBinary, buildMode, buildSystem):
@@ -914,7 +914,7 @@ def build_dependencies_windows(buildMode, cacheDir):
             if os.path.exists(buildPath): shutil.rmtree(buildPath)
             subprocess.run([
                 "cmake.exe",
-                "-S", "./Dependencies/libgodot",
+                "-S", "./Bindings",
                 "-B", buildPath,
                 "-G", "Ninja",
                 "-DCMAKE_BUILD_TYPE=MinSizeRel",
@@ -930,8 +930,8 @@ def build_dependencies_windows(buildMode, cacheDir):
             shutil.copyfile(binary_path, "./Libs/libgodotcpp-static-x86_64.lib")
             if os.path.exists(sdkPath): shutil.rmtree(sdkPath)
             os.makedirs(sdkPath, exist_ok=True)
-            shutil.copyfile("./Dependencies/libgodot/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
-            shutil.copytree("./Dependencies/libgodot/include", sdkPath, dirs_exist_ok=True)
+            shutil.copyfile("./Bindings/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
+            shutil.copytree("./Bindings/include", sdkPath, dirs_exist_ok=True)
             shutil.copytree(buildPath + "/gen/include", sdkPath, dirs_exist_ok=True)
             rgb_print("#38f227", "[ √ ] Jenova Runtime Dependency 'GodotSDK' Compiled Successfully.")
 
@@ -1101,7 +1101,7 @@ def build_dependencies_windows(buildMode, cacheDir):
             if os.path.exists(buildPath): shutil.rmtree(buildPath)
             subprocess.run([
                 "cmake.exe",
-                "-S", "./Dependencies/libgodot",
+                "-S", "./Bindings",
                 "-B", buildPath,
                 "-G", "Ninja",
                 "-DCMAKE_BUILD_TYPE=MinSizeRel",
@@ -1115,8 +1115,8 @@ def build_dependencies_windows(buildMode, cacheDir):
             shutil.copyfile(binary_path, "./Libs/libgodotcpp-static-x86_64.a")
             if os.path.exists(sdkPath): shutil.rmtree(sdkPath)
             os.makedirs(sdkPath, exist_ok=True)
-            shutil.copyfile("./Dependencies/libgodot/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
-            shutil.copytree("./Dependencies/libgodot/include", sdkPath, dirs_exist_ok=True)
+            shutil.copyfile("./Bindings/gdextension/gdextension_interface.h", sdkPath + "/gdextension_interface.h")
+            shutil.copytree("./Bindings/include", sdkPath, dirs_exist_ok=True)
             shutil.copytree(buildPath + "/gen/include", sdkPath, dirs_exist_ok=True)
             rgb_print("#38f227", "[ √ ] Jenova Runtime Dependency 'GodotSDK' Compiled Successfully.")
 def build_windows(compilerBinary, linkerBinary, buildMode, buildSystem):
@@ -1136,7 +1136,7 @@ def build_windows(compilerBinary, linkerBinary, buildMode, buildSystem):
     CacheDB = f"{cacheDir}/Build.db"
 
     # Create Output File
-    outputName = "Jenova.Runtime.Win64.lib" if static_build else "Jenova.Runtime.Win64.dll"
+    outputName = "Jenova.Core.Win64.MSVC.lib" if static_build else "Jenova.Runtime.Win64.dll"
 
     # Ensure Required Directories Exist
     rgb_print("#367fff", "[ ^ ] Validating Paths...")

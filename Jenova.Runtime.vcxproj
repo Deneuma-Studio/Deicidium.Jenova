@@ -15,7 +15,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -36,7 +36,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(BuildPath)</OutDir>
     <IntDir>$(BuildPath)\Cache\Runtime\</IntDir>
-    <TargetName>Jenova.Runtime.Win64</TargetName>
+    <TargetName>Jenova.Core.Win64.MSVC</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -44,7 +44,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;JENOVA_RUNTIME;JENOVA_SDK_BUILD;JENOVA_STATIC_BUILD_DISABLED;LITHIUM_EDITION_DISABLED;TYPED_METHOD_BIND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;JENOVA_RUNTIME;JENOVA_SDK_BUILD;JENOVA_STATIC_BUILD;TYPED_METHOD_BIND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -67,13 +67,8 @@
       <AdditionalOptions>/IGNORE:4098 /IGNORE:4286 /IGNORE:4099 /IGNORE:4199 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(BuildPath)JenovaSDK"
-xcopy "$(ProjectDir)\Source\JenovaSDK.h" "$(BuildPath)JenovaSDK" /Y
-xcopy ".\Jenova.Runtime.gdextension" "$(BuildPath)" /Y
-xcopy "$(TargetDir)$(TargetName).lib" "$(BuildPath)JenovaSDK" /Y
-if exist "$(BuildPath)JenovaSDK\Jenova.SDK.x64.lib" del "$(BuildPath)JenovaSDK\Jenova.SDK.x64.lib"
-ren "$(BuildPath)JenovaSDK\$(TargetName).lib" "Jenova.SDK.x64.lib"
-:: rundll32.exe "$(TargetPath)",Deploy --command increment-build-number /in:"$(SolutionDir)jenova.hpp"</Command>
+      <Command>
+</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">-c65001 %(AdditionalOptions)</AdditionalOptions>
@@ -104,6 +99,7 @@ ren "$(BuildPath)JenovaSDK\$(TargetName).lib" "Jenova.SDK.x64.lib"
     <ClCompile Include="Source\script_templates.cpp" />
     <ClCompile Include="Source\task_system.cpp" />
     <ClCompile Include="Source\tiny_profiler.cpp" />
+    <ClCompile Include="Win64\Cache\jenovaSDK_builtin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AboutImage.h" />

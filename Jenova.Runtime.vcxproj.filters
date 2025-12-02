@@ -53,6 +53,9 @@
     <ClCompile Include="Source\script_profiler.cpp">
       <Filter>Core\Engine\C++</Filter>
     </ClCompile>
+    <ClCompile Include="Win64\Cache\jenovaSDK_builtin.cpp">
+      <Filter>Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resources">

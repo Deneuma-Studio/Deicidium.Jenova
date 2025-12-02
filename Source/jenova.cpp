@@ -467,7 +467,6 @@ namespace jenova
 						if (!editor_settings->has_setting(ManagedSafeExecutionConfigPath)) editor_settings->set(ManagedSafeExecutionConfigPath, true);
 						if (!editor_settings->has_setting(UseBuiltinSDKConfigPath)) editor_settings->set(UseBuiltinSDKConfigPath, true);
 						if (!editor_settings->has_setting(RefreshTreeAfterBuildConfigPath)) editor_settings->set(RefreshTreeAfterBuildConfigPath, false);
-						if (!editor_settings->has_setting(PackageRepositoryPathConfigPath)) editor_settings->set(PackageRepositoryPathConfigPath, jenova::GlobalSettings::JenovaPackageRepositoryPath);
 						if (!editor_settings->has_setting(BuildToolButtonEditorConfigPath)) editor_settings->set(BuildToolButtonEditorConfigPath, int32_t(BuildToolButtonDefaultPlacement));
 
 						// Add the Setting Descriptions to The Editor Settings
@@ -615,19 +614,6 @@ namespace jenova
 							PropertyHint::PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, JenovaEditorSettingsCategory);
 						editor_settings->add_property_info(RefreshTreeAfterBuildProperty);
 						editor_settings->set_initial_value(RefreshTreeAfterBuildConfigPath, false, false);
-
-						// Package Repository Path Property
-						PropertyInfo PackageRepositoryPathProperty(Variant::STRING, PackageRepositoryPathConfigPath,
-							PropertyHint::PROPERTY_HINT_NONE, "", PROPERTY_HINT_DIR, JenovaEditorSettingsCategory);
-						editor_settings->add_property_info(PackageRepositoryPathProperty);
-						editor_settings->set_initial_value(PackageRepositoryPathConfigPath, jenova::GlobalSettings::JenovaPackageRepositoryPath, false);
-
-						// Build Tool Button Placement Property
-						String buttonPlacements = "Before Main Menu,After Main Menu,Before Stage Selector,After Stage Selector,Before Run Bar,After Run Bar,After Render Method";
-						PropertyInfo BuildToolButtonPlacementProperty(Variant::INT, BuildToolButtonEditorConfigPath, PropertyHint::PROPERTY_HINT_ENUM, buttonPlacements,
-							PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED, JenovaEditorSettingsCategory);
-						editor_settings->add_property_info(BuildToolButtonPlacementProperty);
-						editor_settings->set_initial_value(BuildToolButtonEditorConfigPath, int32_t(BuildToolButtonDefaultPlacement), false);
 
 						// All Good
 						return true;
@@ -816,15 +802,6 @@ namespace jenova
 			}
 			bool InitializeDocumentation()
 			{
-				// Register Nodes Documentation
-				jenova::RegisterDocumentationFromByteArray(BUFFER_PTR_SIZE_PARAM(jenova::documentation::JenovaRuntimeXML));
-
-				// Register Scripts Documentation
-				jenova::UpdateScriptsDocumentation();
-
-				// Register Settings Documentation [ Disabled : This will replace entire Editor Settings ]
-				// jenova::RegisterDocumentationFromByteArray(BUFFER_PTR_SIZE_PARAM(jenova::documentation::EditorSettingsXML));
-
 				// All Good
 				return true;
 			}
@@ -6242,11 +6219,6 @@ namespace jenova
 		// All Good
 		return true;
 	}
-	void RegisterDocumentationFromByteArray(const char* xmlDataPtr, size_t xmlDataSize)
-	{
-		std::string documentationData(xmlDataPtr, xmlDataSize);
-		internal::gdextension_interface_editor_help_load_xml_from_utf8_chars_and_len(documentationData.data(), documentationData.size());
-	}
 	void CopyStringToClipboard(const String& str)
 	{
 		DisplayServer::get_singleton()->clipboard_set(str);
@@ -8445,7 +8417,6 @@ namespace jenova
 		else if (enumFlagStr == "PROPERTY_HINT_LINK") return PROPERTY_HINT_LINK;
 		else if (enumFlagStr == "PROPERTY_HINT_FLAGS") return PROPERTY_HINT_FLAGS;
 		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_2D_RENDER") return PROPERTY_HINT_LAYERS_2D_RENDER;
-		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_2D_PHYSICS") return PROPERTY_HINT_LAYERS_2D_PHYSICS;
 		else if (enumFlagStr == "PROPERTY_HINT_FILE") return PROPERTY_HINT_FILE;
 		else if (enumFlagStr == "PROPERTY_HINT_DIR") return PROPERTY_HINT_DIR;
 		else if (enumFlagStr == "PROPERTY_HINT_GLOBAL_FILE") return PROPERTY_HINT_GLOBAL_FILE;
@@ -8465,15 +8436,12 @@ namespace jenova
 		else if (enumFlagStr == "PROPERTY_HINT_INT_IS_OBJECTID") return PROPERTY_HINT_INT_IS_OBJECTID;
 		else if (enumFlagStr == "PROPERTY_HINT_INT_IS_POINTER") return PROPERTY_HINT_INT_IS_POINTER;
 		else if (enumFlagStr == "PROPERTY_HINT_ARRAY_TYPE") return PROPERTY_HINT_ARRAY_TYPE;
-		else if (enumFlagStr == "PROPERTY_HINT_LOCALE_ID") return PROPERTY_HINT_LOCALE_ID;
-		else if (enumFlagStr == "PROPERTY_HINT_LOCALIZABLE_STRING") return PROPERTY_HINT_LOCALIZABLE_STRING;
 		else if (enumFlagStr == "PROPERTY_HINT_NODE_TYPE") return PROPERTY_HINT_NODE_TYPE;
 		else if (enumFlagStr == "PROPERTY_HINT_HIDE_QUATERNION_EDIT") return PROPERTY_HINT_HIDE_QUATERNION_EDIT;
 		else if (enumFlagStr == "PROPERTY_HINT_PASSWORD") return PROPERTY_HINT_PASSWORD;
 		else if (enumFlagStr == "PROPERTY_HINT_MAX") return PROPERTY_HINT_MAX;
 
 		#ifndef LITHIUM_EDITION
-		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_2D_NAVIGATION") return PROPERTY_HINT_LAYERS_2D_NAVIGATION;
 		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_3D_RENDER") return PROPERTY_HINT_LAYERS_3D_RENDER;
 		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_3D_PHYSICS") return PROPERTY_HINT_LAYERS_3D_PHYSICS;
 		else if (enumFlagStr == "PROPERTY_HINT_LAYERS_3D_NAVIGATION") return PROPERTY_HINT_LAYERS_3D_NAVIGATION;
@@ -9821,29 +9789,6 @@ namespace jenova
 	}
 	bool UpdateScriptsDocumentation()
 	{
-		// Collect Scripts
-		jenova::ResourceCollection projectScripts;
-		jenova::CollectResourcesFromFileSystem("res://", "cpp", projectScripts);
-		for (const auto& projectScript : projectScripts)
-		{
-			// Find Documentation of Scripts
-			String docPath = projectScript->get_path().replace(projectScript->get_path().get_extension(), "xml");
-			if (FileAccess::file_exists(docPath))
-			{
-				// Read Documentation XML Content
-				String docFullPath = ProjectSettings::get_singleton()->globalize_path(docPath);
-				std::string docXMLContent = jenova::ReadStdStringFromFile(AS_STD_STRING(docFullPath));
-				if (docXMLContent.empty())
-				{
-					jenova::Warning("Jenova Documentation Builder", "Unable to Read Documentation for C++ Script %s", AS_C_STRING(projectScript->get_path()));
-					continue;
-				}
-
-				// Add Script Documentation to Engine
-				jenova::RegisterDocumentationFromByteArray(docXMLContent.data(), docXMLContent.size());
-			}
-		}
-
 		// All Good
 		return true;
 	}
