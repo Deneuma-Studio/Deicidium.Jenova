@@ -2804,7 +2804,7 @@ namespace jenova
 					jenova::Error("Visual Studio Exporter", "No GodotSDK Detected On Build System, Install At Least One From Package Manager!");
 					return false;
 				}
-				std::string solvedGodotKitPath = "./" + AS_STD_STRING(selectedGodotKitPath.replace("res://", ""));
+				std::string solvedGodotKitPath = jenova::SolveGodotKitPathForExporters(selectedGodotKitPath);
 
 				// Adjust Compiler Settings
 				if (!extraIncludeDirectories.empty() && extraIncludeDirectories.back() != ';') extraIncludeDirectories.push_back(';');
@@ -3129,7 +3129,7 @@ namespace jenova
 					jenova::Error("Visual Studio Exporter", "No GodotSDK Detected On Build System, Install At Least One From Package Manager!");
 					return false;
 				}
-				std::string solvedGodotKitPath = "./" + AS_STD_STRING(selectedGodotKitPath.replace("res://", ""));
+				std::string solvedGodotKitPath = jenova::SolveGodotKitPathForExporters(selectedGodotKitPath);
 
 				// Adjust Compiler Settings
 				if (!extraIncludeDirectories.empty() && extraIncludeDirectories.back() != ';') extraIncludeDirectories.push_back(';');
@@ -3299,7 +3299,7 @@ namespace jenova
 					jenova::Error("CLion Exporter", "No GodotSDK Detected On Build System, Install At Least One From Package Manager!");
 					return false;
 				}
-				std::string solvedGodotKitPath = "./" + AS_STD_STRING(selectedGodotKitPath.replace("res://", ""));
+				std::string solvedGodotKitPath = jenova::SolveGodotKitPathForExporters(selectedGodotKitPath);
 
 				// Adjust Compiler Settings
 				if (!extraIncludeDirectories.empty() && extraIncludeDirectories.back() != ';') extraIncludeDirectories.push_back(';');
@@ -3486,7 +3486,7 @@ namespace jenova
 					jenova::Error("Neovim Exporter", "No GodotSDK Detected On Build System, Install At Least One From Package Manager!");
 					return false;
 				}
-				std::string solvedGodotKitPath = "./" + AS_STD_STRING(selectedGodotKitPath.replace("res://", ""));
+				std::string solvedGodotKitPath = jenova::SolveGodotKitPathForExporters(selectedGodotKitPath);
 
 				// Extra Includes
 				std::string extraIncludeDirectories = AS_STD_STRING(String(jenovaCompiler->GetCompilerOption("cpp_extra_include_directories")));
@@ -7918,6 +7918,14 @@ namespace jenova
 			}
 		}
 		return "Missing-GodotKit-1.0.0";
+	}
+	std::string SolveGodotKitPathForExporters(const String& godotKitPath)
+	{
+		String cleanedPath = godotKitPath.replace("res://", "");
+		std::string pathStr = AS_STD_STRING(cleanedPath);
+		std::filesystem::path fsPath(pathStr);
+		if (fsPath.is_absolute()) return fsPath.string();
+		else return "./" + fsPath.string();
 	}
 	std::string ResolveVariantValueAsString(const Variant* variantValue, const std::string& variantType, jenova::PointerList& ptrList)
 	{
