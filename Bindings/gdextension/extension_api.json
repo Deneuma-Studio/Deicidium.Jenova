@@ -1,11 +1,11 @@
 {
 	"header": {
 		"version_major": 1,
-		"version_minor": 8,
+		"version_minor": 9,
 		"version_patch": 0,
 		"version_status": "alpha",
 		"version_build": "saikou",
-		"version_full_name": "Deicidium v1.8.alpha.saikou",
+		"version_full_name": "Deicidium v1.9.alpha.saikou",
 		"precision": "single"
 	},
 	"builtin_class_sizes": [
@@ -17587,6 +17587,101 @@
 							"name": "a8",
 							"type": "int",
 							"default_value": "255"
+						}
+					]
+				},
+				{
+					"name": "lighten",
+					"return_type": "Color",
+					"is_vararg": false,
+					"is_const": true,
+					"is_static": false,
+					"hash": 2793933937,
+					"arguments": [
+						{
+							"name": "power",
+							"type": "float",
+							"default_value": "20.0"
+						},
+						{
+							"name": "limit",
+							"type": "float",
+							"default_value": "1.0"
+						}
+					]
+				},
+				{
+					"name": "darken",
+					"return_type": "Color",
+					"is_vararg": false,
+					"is_const": true,
+					"is_static": false,
+					"hash": 2793933937,
+					"arguments": [
+						{
+							"name": "power",
+							"type": "float",
+							"default_value": "20.0"
+						},
+						{
+							"name": "limit",
+							"type": "float",
+							"default_value": "0.0"
+						}
+					]
+				},
+				{
+					"name": "fade",
+					"return_type": "Color",
+					"is_vararg": false,
+					"is_const": true,
+					"is_static": false,
+					"hash": 2793933937,
+					"arguments": [
+						{
+							"name": "power",
+							"type": "float",
+							"default_value": "20.0"
+						},
+						{
+							"name": "limit",
+							"type": "float",
+							"default_value": "0.0"
+						}
+					]
+				},
+				{
+					"name": "opacify",
+					"return_type": "Color",
+					"is_vararg": false,
+					"is_const": true,
+					"is_static": false,
+					"hash": 2793933937,
+					"arguments": [
+						{
+							"name": "power",
+							"type": "float",
+							"default_value": "20.0"
+						},
+						{
+							"name": "limit",
+							"type": "float",
+							"default_value": "1.0"
+						}
+					]
+				},
+				{
+					"name": "saturate",
+					"return_type": "Color",
+					"is_vararg": false,
+					"is_const": true,
+					"is_static": false,
+					"hash": 1466039168,
+					"arguments": [
+						{
+							"name": "percentage",
+							"type": "float",
+							"default_value": "0.0"
 						}
 					]
 				}
